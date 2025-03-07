@@ -1,0 +1,116 @@
+import java.util.*;
+
+public class JavaCollectionsAndThreads {
+
+    // Easy Level: Employee Management with ArrayList
+    static class Employee {
+        int id;
+        String name;
+        double salary;
+
+        Employee(int id, String name, double salary) {
+            this.id = id;
+            this.name = name;
+            this.salary = salary;
+        }
+
+        @Override
+        public String toString() {
+            return "ID: " + id + ", Name: " + name + ", Salary: " + salary;
+        }
+    }
+
+    public static void easyLevel() {
+        List<Employee> employees = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
+        
+        while (true) {
+            System.out.println("1. Add Employee  2. Update Employee  3. Remove Employee  4. Search Employee  5. Exit");
+            int choice = scanner.nextInt();
+            if (choice == 5) break;
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter ID, Name, Salary:");
+                    employees.add(new Employee(scanner.nextInt(), scanner.next(), scanner.nextDouble()));
+                    break;
+                case 2:
+                    System.out.println("Enter ID to update:");
+                    int updateId = scanner.nextInt();
+                    employees.stream().filter(e -> e.id == updateId).findFirst().ifPresent(emp -> {
+                        System.out.println("Enter new Name and Salary:");
+                        emp.name = scanner.next();
+                        emp.salary = scanner.nextDouble();
+                    });
+                    break;
+                case 3:
+                    System.out.println("Enter ID to remove:");
+                    int removeId = scanner.nextInt();
+                    employees.removeIf(e -> e.id == removeId);
+                    break;
+                case 4:
+                    System.out.println("Enter ID to search:");
+                    int searchId = scanner.nextInt();
+                    employees.stream().filter(e -> e.id == searchId).forEach(System.out::println);
+                    break;
+            }
+        }
+        scanner.close();
+    }
+
+    // Medium Level: Card Collection Management
+    public static void mediumLevel() {
+        Map<String, List<String>> cards = new HashMap<>();
+        cards.put("Hearts", Arrays.asList("A", "2", "3", "4", "5"));
+        cards.put("Spades", Arrays.asList("K", "Q", "J", "10", "9"));
+        
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter symbol to find cards:");
+        String symbol = scanner.next();
+        
+        cards.getOrDefault(symbol, Collections.emptyList()).forEach(System.out::println);
+        scanner.close();
+    }
+
+    // Hard Level: Ticket Booking with Threads
+    static class TicketBookingSystem {
+        private int availableSeats = 10;
+
+        public synchronized void bookSeat(String name) {
+            if (availableSeats > 0) {
+                System.out.println(name + " booked a seat. Seats left: " + (--availableSeats));
+            } else {
+                System.out.println(name + " tried to book, but no seats left.");
+            }
+        }
+    }
+
+    public static void hardLevel() {
+        TicketBookingSystem bookingSystem = new TicketBookingSystem();
+
+        Runnable vipBooking = () -> {
+            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+            bookingSystem.bookSeat("VIP");
+        };
+
+        Runnable normalBooking = () -> {
+            Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+            bookingSystem.bookSeat("Normal User");
+        };
+
+        for (int i = 0; i < 12; i++) {
+            new Thread(i % 3 == 0 ? vipBooking : normalBooking).start();
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Easy Level:");
+        easyLevel();
+        System.out.println("\nMedium Level:");
+        mediumLevel();
+        System.out.println("\nHard Level:");
+        hardLevel();
+    }
+}
+
+// Let me know if you’d like me to fine-tune anything or add more features! 🚀✨
